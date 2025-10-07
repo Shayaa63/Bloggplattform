@@ -3,111 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blogg Plattform</title>
-    <script src="scripts.js" defer></script>
+    <title>Document</title>
     <link rel="stylesheet" href="styles.css">
-
+    <script src="scripts.js" defer ></script>
 </head>
 <body>
     <header>
         <h1> Blogg Plattform</h1>
     </header>
-    <main>
+    <main class="main-layout">
+        <!-- Vänster: Navigering -->
         <div class="sidebar">
-            <nav>
-                <a href="#posts">Inlägg</a>
-                <a href="#new-post">Nytt Inlägg</a>
-                <a href="#search-posts">Sök Inlägg</a>
-                <a href="#recent-edits-section">Senast ändrade</a>
-                <a href="#delete-post">Radera Inlägg</a>
-                <a href="#edit-post">Redigera Inlägg</a>
+            <nav class="nav-clicks">
+                <button id="skapa-ny-inlägg">Ny inlägg</button>
+                <button id="senast-publicerad-section">Senast</button>
             </nav>
         </div>
-        <div class="contents">
-            <section id="posts">
+
+        <!-- Mitten: Huvudinnehåll -->
+        <div class="blogg-innehåll">
+            <!-- en formulär för att kunna lägga till inlägg -->
+            <section id="ny-inlägg" style="display: none;">
+                <h2>Nytt Inlägg</h2>
+                <form id="ny-inlägg-form">
+                    <label for="title">Titel:</label>
+                    <input type="text" id="title" name="title" required>
+                
+                    <label for="author">Författare:</label>
+                    <input type="text" id="author" name="author" required>
+                
+                    <label for="content">Innehåll:</label>
+                    <textarea id="content" name="content" required></textarea>
+                
+                    <button type="submit" id="publicera">Publicera</button>
+                </form>
+            </section>
+            <section id="blogg-inlägg">
+                <!-- blogg inläggen  -->
                 <h2>Blogg Inlägg</h2>
-                <div id="post-list"></div>
-            </section>
-            <section id="new-post" style="display:none;">
-                <h2>Skapa Nytt Inlägg</h2>
-                <form id="post-form">
-                    <input type="text" id="title" placeholder="Titel" required>
-                    <textarea id="content" placeholder="Innehåll" required></textarea>
-                    <input type="text" id="author" placeholder="Författare" required>
-                    <input type="date" id="date" required>
-                    <button type="submit">Publicera</button>
-                </form>
-            </section>
-             <section id="tidigareInlägg">
-                <div>
-                    <div id="tidigareInlägg-list">
-                        <ul>
-                           <li id="inläggA" class="inlägg">
-                            <h3>Inlägg A - Publicerat den 2024-05-20</h3>
-                            <p>
-                                Detta är innehållet i inlägg A. Det är ett exempel på ett tidigare inlägg.
-                            </p>
-                           </li>
-                           <li id="inläggB" class="inlägg">
-                            <h3>Inlägg B - Publicerat den 2024-05-15</h3>
-                            <p>Detta är innehållet i inlägg B. Det är ett exempel på ett tidigare inlägg.</p>
-                            </li>
-                           <li id="inläggC" class="inlägg">
-                            <h3>Inlägg C - Publicerat den 2024-05-10</h3>
-                            <p>Detta är innehållet i inlägg C. Det är ett exempel på ett tidigare inlägg.</p>
-                           </li>
-                        </ul>
-                    </div>
-                </div>
-            </section>
-        </div>
-        <div class="contents">
-            <section id="edit-post" style="display:none;">
-                <h2>Redigera Inlägg</h2>
-                <form id="edit-form">
-                    <input type="text" id="edit-title" placeholder="Titel" required>
-                    <textarea id="edit-content" placeholder="Innehåll" required></textarea>
-                    <button type="submit">Spara Ändringar</button>
-                    <button type="button" id="cancel-edit">Avbryt</button>
-                </form>
-            </section>
-        </div>
-        <div class="contents">
-            <section id="delete-post" style="display:none;">
-                <h2>Radera Inlägg</h2>
-                <p>Är du säker på att du vill radera detta inlägg?</p>
-                <button id="confirm-delete">Ja, radera</button>
-                <button id="cancel-delete">Avbryt</button>
-            </section>
-        </div>
-        <div class="contents">
-            <section id="search-posts">
-                <h2>Sök Inlägg</h2>
-                <input type="text" id="search-query" placeholder="Sök...">
-                <button id="search-button">Sök</button>
-                <div id="search-results"></div>
-            </section>  
-        </div>
-        <div class="contents">
-            <section id="recent-edits-section" style="display:none;" >
-                <h2>Senast ändrade</h2>
-                <div id="recent-edits">
-                    <!-- Dynamiskt genererat innehåll för senast ändrade inlägg --> 
-                    <div id="recent-edits-list">
-                        <ul>
-                           <li>Inlägg 1 - Ändrat den 2024-06-01</li>
-                           <li>Inlägg 2 - Ändrat den 2024-06-02</li>
-                           <li>Inlägg 3 - Ändrat den 2024-06-03</li>
-                        </ul>
-                    </div>
+                <div id="tidigare-inläggen">
+                    <article class="inlägg">
+                        <h3>Inlägg 1</h3>
+                        <p><time datetime="2025-09-26">26 september 2025</time> av <strong>Anna</strong></p>
+                        <p>Detta är innehållet för inlägg 1.</p>
+                    </article>
+
+                    <article class="inlägg">
+                        <h3>Inlägg 2</h3>
+                        <p><time datetime="2025-09-25">25 september 2025</time> av <strong>Björn</strong></p>
+                        <p>Detta är innehållet för inlägg 2.</p>
+                    </article>
+                    <!-- JavaScript lägger till fler här -->
                 </div>
             </section>
         </div>
     </main>
     <footer>
-        <a href="#top">Till toppen</a>
-        <a href="#posts">Inlägg</a>
-        <a href="#kontakta-oss">KONTAKTA OSS</a> 
+        <a id="till-toppen">Till toppen</a>
+        <a >Inlägg</a>
+        <a id="kontakta-oss">KONTAKTA OSS</a> 
         <p>&copy; 2024 Blogg Plattform</p>
     </footer>
 </body>
