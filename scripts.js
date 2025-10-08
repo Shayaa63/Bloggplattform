@@ -64,3 +64,7 @@ function publiceraInlägg (e){
 
 publicera.addEventListener("click", publiceraInlägg)
 
+window.addEventListener("DOMContentLoaded", (e)=>{
+    const sparade = JSON.parse(localStorage.getItem("inlägg")) || [];
+    sparade.forEach(visaInlägg)
+});
