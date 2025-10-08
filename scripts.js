@@ -7,11 +7,7 @@ skapaNyInlägg.addEventListener("click", (e)=>{
     nyInlägg.style.display = nyInlägg.style.display === "none" ? "block": "none";
 });
 
-
-
-
 const publicera = document.getElementById("publicera")
-
 publicera.addEventListener("click", (e)=>{
     // Hämtar in den akutella datum och tid
     let nu = new Date();
@@ -41,11 +37,22 @@ publicera.addEventListener("click", (e)=>{
       <p>${content.replace(/\n/g,"<br>")}</p>`;
     nyInlägg.style.display = "none";
 
-    // Lägg till i DOM
+    // lägger till så den hamnar under blogg inlägg
     tidigareInläggen.prepend(nyArticle); // lägger överst
     nyInläggForm.reset(); // tömmer formuläret
 
+    //Sparar varje blogg inlägg i en array
+    const inlägg = {
+        titel: title,
+        författare: author,
+        innehåll: content,
+        tid: datumTid
+    };
+
 })
+
+
+
 
 
 
