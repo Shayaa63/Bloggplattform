@@ -7,9 +7,21 @@ skapaNyInlägg.addEventListener("click", (e)=>{
     nyInlägg.style.display = nyInlägg.style.display === "none" ? "block": "none";
 });
 
+
+
+
 const publicera = document.getElementById("publicera")
 
 publicera.addEventListener("click", (e)=>{
+    // Hämtar in den akutella datum och tid
+    let nu = new Date();
+    let datumTid = nu.toLocaleString("sv-SE", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+    });
     // Hämta värden från formuläret
     const title = document.getElementById("title").value;
     const author = document.getElementById("author").value;
@@ -23,7 +35,7 @@ publicera.addEventListener("click", (e)=>{
     nyArticle.innerHTML = `
       <h3>${title}</h3>
       <p>
-        <time datetime="${new Date().toISOString().split("T")[0]}">${new Date().toLocaleDateString("sv-SE")}</time> 
+        ${datumTid} 
         av <strong>${author}</strong>
       </p>
       <p>${content.replace(/\n/g,"<br>")}</p>`;
@@ -34,3 +46,6 @@ publicera.addEventListener("click", (e)=>{
     nyInläggForm.reset(); // tömmer formuläret
 
 })
+
+
+
