@@ -1,11 +1,13 @@
+const bloggInlägg = document.getElementById("blogg-inlägg")
 const skapaNyInlägg = document.getElementById ("skapa-ny-inlägg");
-const nyInlägg = document.getElementById("ny-inlägg");
+const nyInläggSection = document.getElementById("ny-inlägg-section");
 const tidigareInläggen =document.getElementById("tidigare-inläggen")
 const nyInläggForm = document.getElementById("ny-inlägg-form")
 const publicera = document.getElementById("publicera")
 
 skapaNyInlägg.addEventListener("click", (e)=>{
-    nyInlägg.style.display = nyInlägg.style.display === "none" ? "block": "none";
+    nyInläggSection.style.display = nyInläggSection.style.display === "none" ? "block": "none";
+    
 });
 
 
@@ -39,9 +41,11 @@ function publiceraInlägg (e){
 
     if (!title || !author || !content) {
         varning.textContent = "Du måste fylla i alla fält innan du kan publicera.";
-        return; // stoppar funktionen
+        // stoppar funktionen
+        return; 
     } else {
-        varning.textContent = ""; // rensar meddelandet om allt är ifyllt
+        // rensar meddelandet om allt är ifyllt
+        varning.textContent = ""; 
         // Hämtar in den akutella datum och tid
         const nu = new Date();
         const datumTid = nu.toLocaleString("sv-SE", {
@@ -60,13 +64,17 @@ function publiceraInlägg (e){
             tid: datumTid
         };
 
-        visaInlägg(inlägg) //kör funktionen 
-        //spara alla inlägg i en lista (array)
-        let allaInlägg = JSON.parse(localStorage.getItem("inlägg")) || []; //Hämta tidigare sparade inlägg
-        allaInlägg.push(inlägg); // lägger till inlägget sist i arrayn
-        localStorage.setItem("inlägg", JSON.stringify(allaInlägg)); //Gör det till j-son och spara det i local storage
+        visaInlägg(inlägg) 
+
+        //Hämta tidigare sparade inlägg och spara i en javaScrips array om inget tidigare inlägg skapa en tom array
+        let allaInlägg = JSON.parse(localStorage.getItem("inlägg")) || []; 
+
+        // lägger till inlägget sist i arrayn
+        allaInlägg.push(inlägg); 
+        //Gör det till j-son och spara det i local storage
+        localStorage.setItem("inlägg", JSON.stringify(allaInlägg)); 
         nyInläggForm.reset();
-        nyInlägg.style.display = "none";
+        nyInläggSection.style.display = "none";
     }
 };
 
