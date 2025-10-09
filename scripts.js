@@ -29,37 +29,45 @@ function visaInlägg(inlägg){
 
 
 function publiceraInlägg (e){
-    // Hämtar in den akutella datum och tid
-    const nu = new Date();
-    const datumTid = nu.toLocaleString("sv-SE", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit"
-    });
-
     // Hämta värden från formuläret
     const title = document.getElementById("title").value;
     const author = document.getElementById("author").value;
     const content = document.getElementById("content").value;
 
-    //Sparar blogg inläggen i ett objekt "inlägg" 
-    const inlägg = {
-        titel: title,
-        författare: author,
-        innehåll: content,
-        tid: datumTid
-    };
+    //kontrollerar om något är tomt
+    const varning = document.getElementById("varning");
 
-    visaInlägg(inlägg) //kör funktionen 
-    //spara alla inlägg i en lista (array)
-    let allaInlägg = JSON.parse(localStorage.getItem("inlägg")) || []; //Hämta tidigare sparade inlägg
-    allaInlägg.push(inlägg); // lägger till inlägget sist i arrayn
-    localStorage.setItem("inlägg", JSON.stringify(allaInlägg)); //Gör det till j-son och spara det i local storage
-    nyInlägg.style.display = "none";
-    nyInläggForm.reset();
+    if (!title || !author || !content) {
+        varning.textContent = "Du måste fylla i alla fält innan du kan publicera.";
+        return; // stoppar funktionen
+    } else {
+        varning.textContent = ""; // rensar meddelandet om allt är ifyllt
+        // Hämtar in den akutella datum och tid
+        const nu = new Date();
+        const datumTid = nu.toLocaleString("sv-SE", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+        });
 
+        //Sparar blogg inläggen i ett objekt "inlägg" 
+        const inlägg = {
+            titel: title,
+            författare: author,
+            innehåll: content,
+            tid: datumTid
+        };
+
+        visaInlägg(inlägg) //kör funktionen 
+        //spara alla inlägg i en lista (array)
+        let allaInlägg = JSON.parse(localStorage.getItem("inlägg")) || []; //Hämta tidigare sparade inlägg
+        allaInlägg.push(inlägg); // lägger till inlägget sist i arrayn
+        localStorage.setItem("inlägg", JSON.stringify(allaInlägg)); //Gör det till j-son och spara det i local storage
+        nyInläggForm.reset();
+        nyInlägg.style.display = "none";
+    }
 };
 
 publicera.addEventListener("click", publiceraInlägg)

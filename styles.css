@@ -5,7 +5,7 @@ body {
   line-height: 1.6;
   margin: 0;
   padding: 0;
-  background-color: #ffffff;
+  background-color: whitesmoke;
   color: #000000;
   height: 100%;
   display: flex;
@@ -81,11 +81,16 @@ header{
 }
 .inlägg{
   background: #f9f9f9;
-  border: 1px solid #ffffff;
+  border: 1px solid white;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 8px black;
   width: 70%;
   margin:20px;
+}
+.varning {
+  color: red;
+  font-weight: bold;
+  margin-bottom: 10px;
 }
 
 footer{
@@ -93,22 +98,3 @@ footer{
   padding: 10px;
 }
 
-
-
-/* 
-@media (max-width: 768px) {
-  .main-layout {
-    flex-direction: column;
-  }
-
-  .sidebar {
-    width: 100%;
-    flex-direction: row;
-    justify-content: space-around;
-    height: auto;
-  }
-
-  #inlägg1, #inlägg2 {
-    width: 90%;
-  }
-} */

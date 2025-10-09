@@ -26,16 +26,19 @@
             <section id="ny-inlägg" style="display: none;">
                 <h2>Nytt Inlägg</h2>
                 <form id="ny-inlägg-form">
+                    <div id="varning" class="varning">
+                        <!-- här skapas en meddelande om någon inputfält är tom -->
+                    </div>
                     <label for="title">Titel:</label>
-                    <input type="text" id="title" name="title" required>
+                    <input type="text" id="title" name="title">
                 
                     <label for="author">Författare:</label>
-                    <input type="text" id="author" name="author" required>
+                    <input type="text" id="author" name="author" >
                 
                     <label for="content">Innehåll:</label>
-                    <textarea id="content" name="content" required></textarea>
+                    <textarea id="content" name="content" ></textarea>
                 
-                    <button type="submit" id="publicera">Publicera</button>
+                    <button type="button" id="publicera">Publicera</button>
                 </form>
             </section>
             <section id="blogg-inlägg">
@@ -53,7 +56,7 @@
                         <p><time datetime="2025-09-25">25 september 2025 kl. 20:25</time> av <strong>Björn</strong></p>
                         <p>Detta är innehållet för inlägg 2.</p>
                     </article>
-                    <!-- JavaScript lägger till fler här -->
+                    <!-- JavaScript lägger till flera inlägg här -->
                 </div>
             </section>
         </div>
