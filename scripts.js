@@ -7,7 +7,7 @@ const publicera = document.getElementById("publicera")
 
 skapaNyInlägg.addEventListener("click", (e)=>{
     nyInläggSection.style.display = nyInläggSection.style.display === "none" ? "block": "none";
-    
+    bloggInlägg.style.display =  bloggInlägg.style.display === "none" ? "block": "none";
 });
 
 
@@ -31,6 +31,7 @@ function visaInlägg(inlägg){
 
 
 function publiceraInlägg (e){
+    bloggInlägg.style.display = "block";
     // Hämta värden från formuläret
     const title = document.getElementById("title").value;
     const author = document.getElementById("author").value;
