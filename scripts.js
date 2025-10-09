@@ -4,14 +4,26 @@ const nyInläggSection = document.getElementById("ny-inlägg-section");
 const tidigareInläggen =document.getElementById("tidigare-inläggen")
 const nyInläggForm = document.getElementById("ny-inlägg-form")
 const publicera = document.getElementById("publicera")
+const senastPubliceradSection = document.getElementById("senast-publicerad-section")
+const visaAllaKnapp  = document.getElementById("visa-alla-knapp")
+const senasteVisning = document.getElementById("senaste-visning")
+const senasteVisningSection = document.getElementById("senaste-visning-section")
 
 skapaNyInlägg.addEventListener("click", (e)=>{
     nyInläggSection.style.display = nyInläggSection.style.display === "none" ? "block": "none";
     bloggInlägg.style.display =  bloggInlägg.style.display === "none" ? "block": "none";
+    senasteVisningSection.style.display = "none"
 });
+
+visaAllaKnapp.addEventListener("click", () =>{
+    nyInläggSection.style.display = "none";
+    bloggInlägg.style.display = "block";
+    senasteVisningSection.style.display = "none"
+})
 
 
 function visaInlägg(inlägg){
+    senasteVisningSection.style.display = "none";
     // Skapa nytt <article>
     const nyArticle = document.createElement("article")
     nyArticle.classList.add("inlägg")
@@ -68,18 +80,38 @@ function publiceraInlägg (e){
         visaInlägg(inlägg) 
 
         //Hämta tidigare sparade inlägg och spara i en javaScrips array om inget tidigare inlägg skapa en tom array
-        let allaInlägg = JSON.parse(localStorage.getItem("inlägg")) || []; 
+        const allaInläggPublicerad = JSON.parse(localStorage.getItem("inlägg")) || []; 
 
         // lägger till inlägget sist i arrayn
-        allaInlägg.push(inlägg); 
+        allaInläggPublicerad.push(inlägg); 
         //Gör det till j-son och spara det i local storage
-        localStorage.setItem("inlägg", JSON.stringify(allaInlägg)); 
+        localStorage.setItem("inlägg", JSON.stringify(allaInläggPublicerad)); 
         nyInläggForm.reset();
         nyInläggSection.style.display = "none";
     }
 };
 
 publicera.addEventListener("click", publiceraInlägg)
+
+senastPubliceradSection.addEventListener("click", () => {
+    nyInläggSection.style.display = "none";
+    senasteVisningSection.style.display = "block";
+    bloggInlägg.style.display = "block";
+    const allaInläggPublicerad = JSON.parse(localStorage.getItem("inlägg")) || [];
+    const senasteInlägg = allaInläggPublicerad[allaInläggPublicerad.length - 1];
+
+    if (senasteInlägg) {
+        senasteVisning.innerHTML = `
+        <article class="inlägg">
+        <h3>${senasteInlägg.titel}</h3>
+        <p>${senasteInlägg.tid} av <strong>${senasteInlägg.författare}</strong></p>
+        <p>${senasteInlägg.innehåll.replace(/\n/g, "<br>")}</p>
+        `;
+    } else {
+        senasteVisning.innerHTML = "<p>Inga inlägg hittades.</p>";
+    }
+});
+
 
 window.addEventListener("DOMContentLoaded", (e)=>{
     const sparade = JSON.parse(localStorage.getItem("inlägg")) || [];

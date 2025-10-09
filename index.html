@@ -17,11 +17,18 @@
             <nav class="nav-clicks">
                 <button id="skapa-ny-inlägg">Ny inlägg</button>
                 <button id="senast-publicerad-section">Senast</button>
+                <button id="visa-alla-knapp">Alla Inlägg</button>
             </nav>
         </div>
 
         <!-- Mitten: Huvudinnehåll -->
         <div class="blogg-innehåll">
+            <!-- visar den senaste inläggen när kappen trycks -->
+            <section id="senaste-visning-section">
+                <h2>Senaste inläggen</h2>
+                <div id="senaste-visning"></div>
+            </section>
+
             <!-- en formulär för att kunna lägga till inlägg -->
             <section id="ny-inlägg-section" style="display: none;">
                 <h2>Nytt Inlägg</h2>
