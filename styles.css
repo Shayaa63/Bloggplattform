@@ -97,6 +97,16 @@ header{
   box-shadow: 0 0.25rem 0.5rem black;
   width: 70%;
 }
+
+.ta-bort-inlägg{
+  background-color: #d9534f;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  margin-top: 10px;
+
+}
 .varning {
   color: red;
   font-weight: bold;

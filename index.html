@@ -15,7 +15,7 @@
         <!-- Vänster: Navigering -->
         <div class="sidebar">
             <nav class="nav-clicks">
-                <button id="skapa-ny-inlägg">Ny inlägg</button>
+                <button id="skapa-ny-inlägg">Skapa inlägg</button>
                 <button id="senast-publicerad-section">Senast</button>
                 <button id="visa-alla-knapp">Alla Inlägg</button>
             </nav>
@@ -24,7 +24,7 @@
         <!-- Mitten: Huvudinnehåll -->
         <div class="blogg-innehåll">
             <!-- visar den senaste inläggen när kappen trycks -->
-            <section id="senaste-visning-section">
+            <section id="senaste-visning-section" style="display: none;">
                 <h2>Senaste inläggen</h2>
                 <div id="senaste-visning"></div>
             </section>
@@ -52,18 +52,10 @@
                 <!-- blogg inläggen  -->
                 <h2>Blogg Inlägg</h2>
                 <div id="tidigare-inläggen">
-                    <article class="inlägg">
-                        <h3>Inlägg 1</h3>
-                        <p><time datetime="2025-09-26">26 september 2025 kl. 20:25</time> av <strong>Anna</strong></p>
-                        <p>Detta är innehållet för inlägg 1.</p>
-                    </article>
-
-                    <article class="inlägg">
-                        <h3>Inlägg 2</h3>
-                        <p><time datetime="2025-09-25">25 september 2025 kl. 20:25</time> av <strong>Björn</strong></p>
-                        <p>Detta är innehållet för inlägg 2.</p>
-                    </article>
-                    <!-- JavaScript lägger till flera inlägg här -->
+                    <div>
+                        <h3 id="inga-inlägg-meddelande">Inga inlägg ännu tryck på <strong> Skapa inlägg </strong>för att skapa inlägg</h3>
+                    </div>
+                    <!-- JavaScript lägger till inlägg här -->
                 </div>
             </section>
         </div>
