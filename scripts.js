@@ -12,15 +12,34 @@ const ingaInläggMeddelande = document.getElementById("inga-inlägg-meddelande")
 
 skapaNyInlägg.addEventListener("click", (e)=>{
     nyInläggSection.style.display = nyInläggSection.style.display === "none" ? "block": "none";
-    bloggInlägg.style.display =  bloggInlägg.style.display === "none" ? "block": "none";
+    bloggInlägg.style.display =  bloggInlägg.style.display === "block" ? "none": "block";
     senasteVisningSection.style.display = "none"
 });
 
 visaAllaKnapp.addEventListener("click", () =>{
+    ingaInläggMeddelande.style.display = "none"
     nyInläggSection.style.display = "none";
     bloggInlägg.style.display = "block";
     senasteVisningSection.style.display = "none"
 })
+
+senastPubliceradSection.addEventListener("click", () => {
+    nyInläggSection.style.display = "none";
+    senasteVisningSection.style.display = "block";
+    bloggInlägg.style.display = "none";
+
+    const allaInläggPublicerad = hämtaInlägg()
+    const senasteInlägg = allaInläggPublicerad[allaInläggPublicerad.length - 1];
+
+    senasteVisning.innerHTML = "";
+
+    if (senasteInlägg) {
+        const artikel = skapaInläggElement(senasteInlägg);
+        senasteVisning.appendChild(artikel);
+    } else {
+        senasteVisning.innerHTML = "<p>Inga inlägg hittades.</p>";
+    }
+});
 
 function hämtaInlägg() {
   return JSON.parse(localStorage.getItem("inlägg")) || [];
@@ -60,41 +79,6 @@ function taBortInlägg(inläggAttTaBort) {
         tidigareInläggen.append(ingaInläggMeddelande); // Visa meddelande
     }
 }
-function skickaKommentar(inlägg,kommentarForm){
-    // Hämta värden från formuläret
-    const textarea = kommentarForm.querySelector("textarea");
-    const content = textarea.value.trim();
-
-    const varning = document.getElementById("varning");
-    if (!content){
-        varning.textContent = "Du måste fylla i alla fält innan du kan publicera.";
-        // stoppar funktionen
-        return; 
-    }else {
-        // rensar meddelandet om allt är ifyllt
-        varning.textContent = ""; 
-        // Hämtar in den akutella datum och tid
-        const nu = new Date();
-        const datumTid = nu.toLocaleString("sv-SE", {
-            day: "numeric",
-            month: "long",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit"
-        });
-
-        //Sparar kommentaren i ett objekt "inlägg" 
-        const kommentar = {
-            tillhör: inlägg.tid,
-            innehåll: content,
-            tid: datumTid
-        };
-        sparaKommentar(kommentar)
-        textarea.value = "";
-
-    }
-
-}
 
 function kommentar(inlägg){
     const kommentarForm = document.createElement("form")
@@ -103,16 +87,78 @@ function kommentar(inlägg){
     kommentarForm.innerHTML = `
     <textarea placeholder="Skriv en kommentar..." rows="3"></textarea>
     `;
+
     const skickaKommentarKnapp = document.createElement("button")
     skickaKommentarKnapp.textContent = "Skicka kommentar";
     skickaKommentarKnapp.classList.add("ta-bort-inlägg")
     kommentarForm.appendChild(skickaKommentarKnapp);
 
     skickaKommentarKnapp.addEventListener("click", (e)=>{
+        e.preventDefault();
         skickaKommentar(inlägg, kommentarForm);
     })
 
     return kommentarForm;
+}
+
+function skickaKommentar(inlägg,kommentarForm){
+    // Hämta värden från formuläret
+    const textarea = kommentarForm.querySelector("textarea");
+    const content = textarea.value;
+
+    // Hämtar in den akutella datum och tid
+    const nu = new Date();
+    const datumTid = nu.toLocaleString("sv-SE", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+    });
+
+    //Sparar kommentaren i ett objekt
+    const kommentar = {
+        tillhör: inlägg.tid,
+        innehåll: content,
+        tid: datumTid
+    };
+
+    const varning = document.getElementById("varning");
+    if (!content || !content.trim()){
+        varning.textContent = "Du måste fylla i alla fält innan du kan publicera.";
+        // stoppar funktionen
+        return; 
+    }else {
+        varning.textContent ="";
+        sparaKommentar(kommentar)
+        textarea.value = "";
+    }
+
+    if (kommentarForm.kommentarListaEgenskap) {
+        const kommentarElement = document.createElement("p");
+        kommentarElement.innerHTML = `<strong>${kommentar.tid}</strong>: ${kommentar.innehåll}`;
+        kommentarForm.kommentarListaEgenskap.appendChild(kommentarElement);
+    }
+    kommentarForm.style.display = "block";
+    kommentarForm.kommentarListaEgenskap.style.display = "block";
+
+}
+console.log("Kommentar sparad:", kommentar);
+
+function skapaKommentarLista(kommentarInlägg,inlägg){
+    const kommentarLista = document.createElement("div")
+    kommentarLista.classList.add("inlägg");
+    kommentarInlägg.appendChild(kommentarLista)
+
+    kommentarInlägg.kommentarListaEgenskap = kommentarLista;
+
+    const tidigareKommentarer = hämtaKommentar().filter(k => k.tillhör === inlägg.tid);
+    tidigareKommentarer.forEach(k => {
+        const kommentarElement = document.createElement("p");
+        kommentarElement.innerHTML = `<strong>${k.tid}</strong>: ${k.innehåll}`;
+        kommentarLista.appendChild(kommentarElement);
+});
+
 }
 
 function skapaInläggElement(inlägg) {
@@ -137,12 +183,12 @@ function skapaInläggElement(inlägg) {
 
     nyArticle.appendChild(taBortKnapp);
 
-    // skapa en Kommentarssektion's knapp
+    // Skapar en kommentarssektion
+    const kommentarInlägg = kommentar(inlägg);
+    skapaKommentarLista(kommentarInlägg,inlägg);
     const kommentarKnapp = document.createElement("button")
     kommentarKnapp.textContent = "Kommentera";
     kommentarKnapp.classList.add("kommentar-sektion-knapp")
-    const kommentarInlägg = kommentar(inlägg);
-    nyArticle.appendChild(kommentarInlägg);
 
     kommentarKnapp.addEventListener("click", ()=>{
         if (kommentarInlägg.style.display === "none") {
@@ -153,15 +199,14 @@ function skapaInläggElement(inlägg) {
             kommentarKnapp.textContent = "Kommentera";
         }
     })
+    nyArticle.appendChild(kommentarInlägg);
     nyArticle.appendChild(kommentarKnapp);
-
-
 
   return nyArticle;
 }
 
-function visaInlägg(inlägg){
-    senasteVisningSection.style.display = "none";
+function läggTillInlägg(inlägg){
+    bloggInlägg.style.display = "block"
     const nyArticle = skapaInläggElement(inlägg)
     // lägger till så den hamnar under blogg inlägg
     tidigareInläggen.prepend(nyArticle); // lägger överst
@@ -204,7 +249,7 @@ function publiceraInlägg (e){
             tid: datumTid
         };
 
-        visaInlägg(inlägg) 
+        läggTillInlägg(inlägg) 
         sparaInlägg(inlägg)
         nyInläggForm.reset();
         nyInläggSection.style.display = "none";
@@ -213,24 +258,11 @@ function publiceraInlägg (e){
 
 publicera.addEventListener("click", publiceraInlägg)
 
-senastPubliceradSection.addEventListener("click", () => {
-    nyInläggSection.style.display = "none";
-    senasteVisningSection.style.display = "block";
-    bloggInlägg.style.display = "none";
-    const allaInläggPublicerad = hämtaInlägg()
-    const senasteInlägg = allaInläggPublicerad[allaInläggPublicerad.length - 1];
-
-    if (senasteInlägg) {
-        const artikel = skapaInläggElement(senasteInlägg);
-        senasteVisning.innerHTML = "";
-        senasteVisning.appendChild(artikel);
-    } else {
-        senasteVisning.innerHTML = "<p>Inga inlägg hittades.</p>";
-    }
-});
-
 
 window.addEventListener("DOMContentLoaded", (e)=>{
     const sparade = hämtaInlägg()
-    sparade.forEach(visaInlägg)
+    if (sparade.length > 0) {
+        ingaInläggMeddelande.style.display = "none";
+    }
+    sparade.forEach(läggTillInlägg)
 });
