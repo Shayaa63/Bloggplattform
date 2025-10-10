@@ -11,13 +11,21 @@ const senasteVisningSection = document.getElementById("senaste-visning-section")
 const ingaInläggMeddelande = document.getElementById("inga-inlägg-meddelande")
 
 skapaNyInlägg.addEventListener("click", (e)=>{
-    nyInläggSection.style.display = nyInläggSection.style.display === "none" ? "block": "none";
-    bloggInlägg.style.display =  bloggInlägg.style.display === "block" ? "none": "block";
-    senasteVisningSection.style.display = "none"
+    nyInläggSection.style.display = "block";
+    bloggInlägg.style.display = "none";
+    senasteVisningSection.style.display = "none";
 });
 
 visaAllaKnapp.addEventListener("click", () =>{
     ingaInläggMeddelande.style.display = "none"
+
+    const allaInläggPublicerad = hämtaInlägg()
+    const senasteInlägg = allaInläggPublicerad[allaInläggPublicerad.length - 1];
+
+    if (!senasteInlägg) {
+        ingaInläggMeddelande.style.display = "block"
+    }
+
     nyInläggSection.style.display = "none";
     bloggInlägg.style.display = "block";
     senasteVisningSection.style.display = "none"
@@ -143,7 +151,6 @@ function skickaKommentar(inlägg,kommentarForm){
     kommentarForm.kommentarListaEgenskap.style.display = "block";
 
 }
-console.log("Kommentar sparad:", kommentar);
 
 function skapaKommentarLista(kommentarInlägg,inlägg){
     const kommentarLista = document.createElement("div")
@@ -171,6 +178,18 @@ function skapaInläggElement(inlägg) {
         <p>${inlägg.tid} av <strong>${inlägg.författare}</strong></p>
         <p>${inlägg.innehåll.replace(/\n/g, "<br>")}</p>
     `;
+
+    // Skapa en gilla knapp
+    const gillaKnapp = document.createElement("button")
+    let gilla = false;
+    gillaKnapp.textContent = "🤍";
+
+    gillaKnapp.addEventListener("click", ()=>{
+        gilla = !gilla;
+        gillaKnapp.textContent = gilla ? "❤️" : "🤍";
+    })
+    nyArticle.appendChild(gillaKnapp);
+
     // Skapa en ta bort knapp
     const taBortKnapp = document.createElement("button")
     taBortKnapp.textContent = "Ta bort";
