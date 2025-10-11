@@ -10,34 +10,37 @@ const senasteVisning = document.getElementById("senaste-visning")
 const senasteVisningSection = document.getElementById("senaste-visning-section")
 const ingaInläggMeddelande = document.getElementById("inga-inlägg-meddelande")
 
+function visaSektioner({ nyInlägg = false, blogg = false, senaste = false, ingaInläggM = false }) {
+    nyInläggSection.style.display = nyInlägg ? "block" : "none";
+    bloggInlägg.style.display = blogg ? "block" : "none";
+    senasteVisningSection.style.display = senaste ? "block" : "none";
+    ingaInläggMeddelande.style.display = ingaInläggM ? "block" : "none";
+}
+
+
 skapaNyInlägg.addEventListener("click", (e)=>{
-    nyInläggSection.style.display = "block";
-    bloggInlägg.style.display = "none";
-    senasteVisningSection.style.display = "none";
+    visaSektioner({nyInlägg: true})
 });
 
+function hämtaSenasteInlägg() {
+    const alla = hämtaData("inlägg");
+    return alla[alla.length - 1];
+}
+
+
 visaAllaKnapp.addEventListener("click", () =>{
-    ingaInläggMeddelande.style.display = "none"
+    visaSektioner({ blogg: true, ingaInläggM: false });
 
-    const allaInläggPublicerad = hämtaInlägg()
-    const senasteInlägg = allaInläggPublicerad[allaInläggPublicerad.length - 1];
-
+    const senasteInlägg = hämtaSenasteInlägg()
     if (!senasteInlägg) {
-        ingaInläggMeddelande.style.display = "block"
+        visaSektioner({ingaInläggM: true})
     }
-
-    nyInläggSection.style.display = "none";
-    bloggInlägg.style.display = "block";
-    senasteVisningSection.style.display = "none"
 })
 
 senastPubliceradSection.addEventListener("click", () => {
-    nyInläggSection.style.display = "none";
-    senasteVisningSection.style.display = "block";
-    bloggInlägg.style.display = "none";
-
-    const allaInläggPublicerad = hämtaInlägg()
-    const senasteInlägg = allaInläggPublicerad[allaInläggPublicerad.length - 1];
+    visaSektioner({senaste: true})
+    
+    const senasteInlägg = hämtaSenasteInlägg()
 
     senasteVisning.innerHTML = "";
 
@@ -49,31 +52,44 @@ senastPubliceradSection.addEventListener("click", () => {
     }
 });
 
-function hämtaInlägg() {
-  return JSON.parse(localStorage.getItem("inlägg")) || [];
-}
-function hämtaKommentar() {
-  return JSON.parse(localStorage.getItem("kommentarer")) || [];
-}
-
-function sparaInlägg(nyttInlägg) {
-  const alla = hämtaInlägg();
-  // lägger till inlägget sist i arrayn
-  alla.push(nyttInlägg);
-  //Gör det till j-son och spara det i local storage
-  localStorage.setItem("inlägg", JSON.stringify(alla));
+function hämtaDatumochTid() {
+    const nu = new Date();
+    const datumTid = nu.toLocaleString("sv-SE", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+    });
+    return datumTid
 }
 
-function sparaKommentar(kommentar) {
-  const allaKommentar = hämtaKommentar();
+
+function hämtaData(nyckel) {
+  return JSON.parse(localStorage.getItem(nyckel)) || [];
+}
+
+function sparaData(data,nyckel) {
+  const alla = hämtaData(nyckel);
   // lägger till inlägget sist i arrayn
-  allaKommentar.push(kommentar);
+  alla.push(data);
   //Gör det till j-son och spara det i local storage
-  localStorage.setItem("kommentarer", JSON.stringify(allaKommentar));
+  localStorage.setItem(nyckel, JSON.stringify(alla));
+}
+
+function skapaKnapp (text, klassNamn, klickFunktion){
+    const knapp = document.createElement("button");
+    knapp.textContent = text;
+    knapp.classList.add(klassNamn);
+
+    if (typeof klickFunktion === "function") {
+        knapp.addEventListener("click", klickFunktion);
+    }
+    return knapp;
 }
 
 function taBortInlägg(inläggAttTaBort) {
-    const alla = hämtaInlägg();
+    const alla = hämtaData("inlägg");
     const uppdateradLista = alla.filter(inlägg => {
         return !(inlägg.titel === inläggAttTaBort.titel &&
             inlägg.författare === inläggAttTaBort.författare &&
@@ -88,47 +104,22 @@ function taBortInlägg(inläggAttTaBort) {
     }
 }
 
-function kommentar(inlägg){
-    const kommentarForm = document.createElement("form")
-    kommentarForm.classList.add("ny-inlägg-form")
-    kommentarForm.style.display = "none";
-    kommentarForm.innerHTML = `
-    <textarea placeholder="Skriv en kommentar..." rows="3"></textarea>
-    `;
-
-    const skickaKommentarKnapp = document.createElement("button")
-    skickaKommentarKnapp.textContent = "Skicka kommentar";
-    skickaKommentarKnapp.classList.add("ta-bort-inlägg")
-    kommentarForm.appendChild(skickaKommentarKnapp);
-
-    skickaKommentarKnapp.addEventListener("click", (e)=>{
-        e.preventDefault();
-        skickaKommentar(inlägg, kommentarForm);
-    })
-
-    return kommentarForm;
-}
-
-function skickaKommentar(inlägg,kommentarForm){
+function skickaKommentar(inlägg,kommentarFormulär, kommentarLista){
     // Hämta värden från formuläret
-    const textarea = kommentarForm.querySelector("textarea");
+    const textarea = kommentarFormulär.querySelector("textarea");
     const content = textarea.value;
+    const skrivareInput = kommentarFormulär.querySelector("input[name='author']");
+    const skrivaren = skrivareInput.value;
 
     // Hämtar in den akutella datum och tid
-    const nu = new Date();
-    const datumTid = nu.toLocaleString("sv-SE", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit"
-    });
+    datumOchTidNu = hämtaDatumochTid()
 
     //Sparar kommentaren i ett objekt
     const kommentar = {
         tillhör: inlägg.tid,
+        författare: skrivaren, 
         innehåll: content,
-        tid: datumTid
+        tid: datumOchTidNu
     };
 
     const varning = document.getElementById("varning");
@@ -138,94 +129,129 @@ function skickaKommentar(inlägg,kommentarForm){
         return; 
     }else {
         varning.textContent ="";
-        sparaKommentar(kommentar)
+        sparaData(kommentar,"kommentarer")
         textarea.value = "";
     }
-
-    if (kommentarForm.kommentarListaEgenskap) {
-        const kommentarElement = document.createElement("p");
-        kommentarElement.innerHTML = `<strong>${kommentar.tid}</strong>: ${kommentar.innehåll}`;
-        kommentarForm.kommentarListaEgenskap.appendChild(kommentarElement);
-    }
-    kommentarForm.style.display = "block";
-    kommentarForm.kommentarListaEgenskap.style.display = "block";
-
+    
+    const kommentarElement = document.createElement("p");
+    kommentarElement.innerHTML = `<strong>${kommentar.tid}</strong>: ${kommentar.innehåll}`;
+    kommentarLista.appendChild(kommentarElement);
 }
 
-function skapaKommentarLista(kommentarInlägg,inlägg){
+function skapaKommentarsSektionen (inlägg){
+    const kommetarSektion = document.createElement("div");
+    //=============================================================
+
+    //skapa en fomulär för att kunna skriva sin kommentar
+    const kommentarFormulär = document.createElement("form")
+    kommentarFormulär.classList.add("ny-inlägg-form")
+    kommentarFormulär.style.display = "none";
+    kommentarFormulär.innerHTML = ` 
+    <textarea placeholder="Skriv en kommentar..." rows="3"></textarea>
+    `;
+
+    const skickaKommentarKnapp = document.createElement("button")
+    skickaKommentarKnapp.textContent = "Skicka kommentar";
+    skickaKommentarKnapp.classList.add("ta-bort-inlägg")
+    kommentarFormulär.appendChild(skickaKommentarKnapp);
+
+    skickaKommentarKnapp.addEventListener("click", (e)=>{
+        e.preventDefault();
+        skickaKommentar(inlägg, kommentarFormulär, kommentarLista);
+    })
+    //=============================================================
+
     const kommentarLista = document.createElement("div")
     kommentarLista.classList.add("inlägg");
-    kommentarInlägg.appendChild(kommentarLista)
+    kommentarFormulär.appendChild(kommentarLista)
 
-    kommentarInlägg.kommentarListaEgenskap = kommentarLista;
+    kommentarFormulär.kommentarListaEgenskap = kommentarLista;
 
-    const tidigareKommentarer = hämtaKommentar().filter(k => k.tillhör === inlägg.tid);
+    const tidigareKommentarer = hämtaData("kommentarer").filter(k => k.tillhör === inlägg.tid);
     tidigareKommentarer.forEach(k => {
         const kommentarElement = document.createElement("p");
         kommentarElement.innerHTML = `<strong>${k.tid}</strong>: ${k.innehåll}`;
         kommentarLista.appendChild(kommentarElement);
-});
+    });
 
+    //=============================================================
+    
+    const kommentarKnapp = skapaKnapp ("Kommentera", "kommentar-sektion-knapp", ()=>{
+    if (kommentarFormulär.style.display === "none") {
+        kommentarFormulär.style.display = "block";
+        kommentarKnapp.textContent = "Dölj kommentar";
+    }else{
+        kommentarFormulär.style.display = "none";
+        kommentarKnapp.textContent = "Kommentera";
+    }
+    })
+
+    //=============================================================
+    kommetarSektion.appendChild(kommentarKnapp)
+    kommetarSektion.appendChild(kommentarFormulär)
+    
+    return kommetarSektion
 }
 
-function skapaInläggElement(inlägg) {
-    const nyArticle = document.createElement("article");
-    nyArticle.classList.add("inlägg");
+
+function skapaGillaKnapp (inläggTid){
+    const tidigareGillat = hämtaData("tidigareGillat");
+    let gilla = tidigareGillat.includes(inläggTid);
+    const gillaKnapp = skapaKnapp (gilla ? "❤️" : "🤍", "gilla-knapp", ()=>{
+        gilla = !gilla;
+        gillaKnapp.textContent = gilla ? "❤️" : "🤍";
+        uppdateraGillatStatus(inläggTid, gilla)
+    })
+    return gillaKnapp;
+}
+
+function uppdateraGillatStatus(inläggTid, gilla){
+    let uppdateraGillat = hämtaData("tidigareGillat").filter(tid => tid !== inläggTid);
+
+    if (gilla){
+        uppdateraGillat.push(inläggTid)
+    }
+    localStorage.setItem("tidigareGillat", JSON.stringify(uppdateraGillat));
+}
+
+function skapaTabortKnapp (inlägg,artikel){
+    const taBortKnapp = skapaKnapp ("Ta bort", "ta-bort-inlägg", ()=>{
+        taBortInlägg(inlägg);
+        artikel.remove(); // Tar bort från DOM
+    })
+    return taBortKnapp;
+}
+
+function skapaArtikelElement (inlägg){
+    const artikel = document.createElement("article");
+    artikel.classList.add("inlägg");
 
     // Lägg till värdet i den nya articlen 
-    nyArticle.innerHTML = `
+    artikel.innerHTML = `
         <h3>${inlägg.titel}</h3>
         <p>${inlägg.tid} av <strong>${inlägg.författare}</strong></p>
         <p>${inlägg.innehåll.replace(/\n/g, "<br>")}</p>
     `;
+    return artikel;
+}
 
-    // Skapa en gilla knapp
-    const gillaKnapp = document.createElement("button")
-    let gilla = false;
-    gillaKnapp.textContent = "🤍";
+function skapaInläggElement(inlägg) {
+    const artikel = skapaArtikelElement(inlägg)
 
-    gillaKnapp.addEventListener("click", ()=>{
-        gilla = !gilla;
-        gillaKnapp.textContent = gilla ? "❤️" : "🤍";
-    })
-    nyArticle.appendChild(gillaKnapp);
+    const gillaKnapp = skapaGillaKnapp(inlägg.tid)
+    artikel.appendChild(gillaKnapp);
 
-    // Skapa en ta bort knapp
-    const taBortKnapp = document.createElement("button")
-    taBortKnapp.textContent = "Ta bort";
-    taBortKnapp.classList.add("ta-bort-inlägg")
+    const taBortKnapp = skapaTabortKnapp(inlägg,artikel)
+    artikel.appendChild(taBortKnapp);
 
-    taBortKnapp.addEventListener("click", () => {
-        taBortInlägg(inlägg);
-        nyArticle.remove(); // Tar bort från DOM
-    });  
+    const kommentarsSektionen = skapaKommentarsSektionen(inlägg)
+    artikel.appendChild(kommentarsSektionen);
 
-    nyArticle.appendChild(taBortKnapp);
-
-    // Skapar en kommentarssektion
-    const kommentarInlägg = kommentar(inlägg);
-    skapaKommentarLista(kommentarInlägg,inlägg);
-    const kommentarKnapp = document.createElement("button")
-    kommentarKnapp.textContent = "Kommentera";
-    kommentarKnapp.classList.add("kommentar-sektion-knapp")
-
-    kommentarKnapp.addEventListener("click", ()=>{
-        if (kommentarInlägg.style.display === "none") {
-            kommentarInlägg.style.display = "block";
-            kommentarKnapp.textContent = "Dölj kommentar";
-        }else{
-            kommentarInlägg.style.display = "none";
-            kommentarKnapp.textContent = "Kommentera";
-        }
-    })
-    nyArticle.appendChild(kommentarInlägg);
-    nyArticle.appendChild(kommentarKnapp);
-
-  return nyArticle;
+  return artikel;
 }
 
 function läggTillInlägg(inlägg){
-    bloggInlägg.style.display = "block"
+    visaSektioner({blogg: true})
     const nyArticle = skapaInläggElement(inlägg)
     // lägger till så den hamnar under blogg inlägg
     tidigareInläggen.prepend(nyArticle); // lägger överst
@@ -233,7 +259,7 @@ function läggTillInlägg(inlägg){
 
 
 function publiceraInlägg (e){
-    bloggInlägg.style.display = "block";
+    visaSektioner({blogg: true})
     ingaInläggMeddelande.remove();
     // Hämta värden från formuläret
     const title = document.getElementById("title").value;
@@ -245,31 +271,25 @@ function publiceraInlägg (e){
 
     if (!title || !author || !content) {
         varning.textContent = "Du måste fylla i alla fält innan du kan publicera.";
+        bloggInlägg.style.display = "none";
         // stoppar funktionen
         return; 
     } else {
         // rensar meddelandet om allt är ifyllt
         varning.textContent = ""; 
         // Hämtar in den akutella datum och tid
-        const nu = new Date();
-        const datumTid = nu.toLocaleString("sv-SE", {
-            day: "numeric",
-            month: "long",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit"
-        });
+        datumOchTidNu = hämtaDatumochTid()
 
         //Sparar blogg inläggen i ett objekt "inlägg" 
         const inlägg = {
             titel: title,
             författare: author,
             innehåll: content,
-            tid: datumTid
+            tid: datumOchTidNu
         };
 
         läggTillInlägg(inlägg) 
-        sparaInlägg(inlägg)
+        sparaData(inlägg,"inlägg")
         nyInläggForm.reset();
         nyInläggSection.style.display = "none";
     }
@@ -279,7 +299,7 @@ publicera.addEventListener("click", publiceraInlägg)
 
 
 window.addEventListener("DOMContentLoaded", (e)=>{
-    const sparade = hämtaInlägg()
+    const sparade = hämtaData("inlägg")
     if (sparade.length > 0) {
         ingaInläggMeddelande.style.display = "none";
     }
