@@ -1,7 +1,6 @@
 const bloggInlägg = document.getElementById("blogg-inlägg")
 const skapaNyInlägg = document.getElementById ("skapa-ny-inlägg");
 const nyInläggSection = document.getElementById("ny-inlägg-section");
-const tidigareInläggen =document.getElementById("tidigare-inläggen")
 const nyInläggForm = document.getElementById("ny-inlägg-form")
 const publicera = document.getElementById("publicera")
 const senastPubliceradSection = document.getElementById("senast-publicerad-section")
@@ -9,6 +8,8 @@ const visaAllaKnapp  = document.getElementById("visa-alla-knapp")
 const senasteVisning = document.getElementById("senaste-visning")
 const senasteVisningSection = document.getElementById("senaste-visning-section")
 const ingaInläggMeddelande = document.getElementById("inga-inlägg-meddelande")
+
+let tidigareInläggen = document.getElementById("tidigare-inläggen")
 
 function visaSektioner({ nyInlägg = false, blogg = false, senaste = false, ingaInläggM = false }) {
     nyInläggSection.style.display = nyInlägg ? "block" : "none";
@@ -22,25 +23,28 @@ skapaNyInlägg.addEventListener("click", (e)=>{
     visaSektioner({nyInlägg: true})
 });
 
-function hämtaSenasteInlägg() {
-    const alla = hämtaData("inlägg");
-    return alla[alla.length - 1];
+function OmTomLista() {
+    if (hämtaData("inlägg").length === 0) {
+        visaSektioner({ blogg: true, ingaInläggM: true });
+    }
 }
 
-
 visaAllaKnapp.addEventListener("click", () =>{
-    visaSektioner({ blogg: true, ingaInläggM: false });
-
-    const senasteInlägg = hämtaSenasteInlägg()
-    if (!senasteInlägg) {
-        visaSektioner({ingaInläggM: true})
-    }
+    visaSektioner({blogg: true})
+    const allaInlägg = hämtaData ("inlägg")
+    tidigareInläggen.innerHTML= "";
+    OmTomLista()
+    allaInlägg.forEach(inlägg => {
+        const artikel = skapaInläggElement(inlägg)
+        tidigareInläggen.appendChild(artikel)
+    }) 
 })
 
 senastPubliceradSection.addEventListener("click", () => {
     visaSektioner({senaste: true})
-    
-    const senasteInlägg = hämtaSenasteInlägg()
+
+    const allaInlägg = hämtaData("inlägg");
+    const senasteInlägg = allaInlägg[allaInlägg.length - 1];
 
     senasteVisning.innerHTML = "";
 
@@ -66,7 +70,13 @@ function hämtaDatumochTid() {
 
 
 function hämtaData(nyckel) {
-  return JSON.parse(localStorage.getItem(nyckel)) || [];
+    try{
+        const data= JSON.parse(localStorage.getItem(nyckel)) || [];
+        return Array.isArray(data) ? data : [];
+    } catch (e) {
+        console.log("Kunde inte läsa inlägg från localStorage:", e)
+        return [];
+    }
 }
 
 function sparaData(data,nyckel) {
@@ -100,7 +110,6 @@ function taBortInlägg(inläggAttTaBort) {
     
     if (uppdateradLista.length === 0) {
         tidigareInläggen.innerHTML = ""; // Rensa DOM
-        tidigareInläggen.append(ingaInläggMeddelande); // Visa meddelande
     }
 }
 
@@ -108,16 +117,13 @@ function skickaKommentar(inlägg,kommentarFormulär, kommentarLista){
     // Hämta värden från formuläret
     const textarea = kommentarFormulär.querySelector("textarea");
     const content = textarea.value;
-    const skrivareInput = kommentarFormulär.querySelector("input[name='author']");
-    const skrivaren = skrivareInput.value;
 
     // Hämtar in den akutella datum och tid
-    datumOchTidNu = hämtaDatumochTid()
+    const datumOchTidNu = hämtaDatumochTid()
 
     //Sparar kommentaren i ett objekt
     const kommentar = {
         tillhör: inlägg.tid,
-        författare: skrivaren, 
         innehåll: content,
         tid: datumOchTidNu
     };
@@ -218,6 +224,7 @@ function skapaTabortKnapp (inlägg,artikel){
     const taBortKnapp = skapaKnapp ("Ta bort", "ta-bort-inlägg", ()=>{
         taBortInlägg(inlägg);
         artikel.remove(); // Tar bort från DOM
+        OmTomLista()
     })
     return taBortKnapp;
 }
@@ -260,7 +267,8 @@ function läggTillInlägg(inlägg){
 
 function publiceraInlägg (e){
     visaSektioner({blogg: true})
-    ingaInläggMeddelande.remove();
+    ingaInläggMeddelande.style.display = "none";
+
     // Hämta värden från formuläret
     const title = document.getElementById("title").value;
     const author = document.getElementById("author").value;
@@ -278,7 +286,7 @@ function publiceraInlägg (e){
         // rensar meddelandet om allt är ifyllt
         varning.textContent = ""; 
         // Hämtar in den akutella datum och tid
-        datumOchTidNu = hämtaDatumochTid()
+        const datumOchTidNu = hämtaDatumochTid()
 
         //Sparar blogg inläggen i ett objekt "inlägg" 
         const inlägg = {
