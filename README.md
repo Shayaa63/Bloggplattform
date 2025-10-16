@@ -29,7 +29,7 @@ https://willandskill.notion.site/Individuell-20d17cd1771580d7adb7d50a575e8e64
 
 💬 Kommentarsfält per inlägg
 
-👍 Like/dislike-system
+❤️ Like knapp
 
 ---
 
