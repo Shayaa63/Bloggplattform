@@ -69,7 +69,7 @@ Syftet är att förbättra användarupplevelsen oavsett enhet, med tydlig layout
 ## Kom igång
 
 1. Klona detta repo:
-```git clone https://github.com/ditt-användarnamn/bloggplattform.git```
+```git clone https://github.com/Shayaa63/Bloggplattform```
 
 2. Navigera till mappen:
 ```cd bloggplattform```
