@@ -85,7 +85,7 @@ Grundläggande funktioner	✅ Klart
 
 Responsiv design	✅ Klar
 
-Avancerade funktioner	🔄 Under utveckling
+Avancerade funktioner	✅ Klar
 
 ---
 
