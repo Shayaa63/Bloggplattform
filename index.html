@@ -15,54 +15,54 @@
         <!-- Vänster: Navigering -->
         <div class="sidebar">
             <nav class="nav-clicks">
-                <button id="skapa-ny-inlägg">Ny inlägg</button>
+                <button id="skapa-ny-inlägg">Skapa inlägg</button>
                 <button id="senast-publicerad-section">Senast</button>
+                <button id="visa-alla-knapp">Alla Inlägg</button>
             </nav>
         </div>
 
         <!-- Mitten: Huvudinnehåll -->
         <div class="blogg-innehåll">
+            <!-- visar den senaste inläggen när kappen trycks -->
+            <section id="senaste-visning-section" style="display: none;">
+                <h2>Senaste inläggen</h2>
+                <div id="senaste-visning">
+                    <!-- här hamnar den seanste inlägget -->
+                </div>
+            </section>
+
             <!-- en formulär för att kunna lägga till inlägg -->
-            <section id="ny-inlägg" style="display: none;">
+            <section id="ny-inlägg-section" style="display: none;">
                 <h2>Nytt Inlägg</h2>
-                <form id="ny-inlägg-form">
+                <form class="ny-inlägg-form" id="ny-inlägg-form">
+                    <div id="varning" class="varning">
+                        <!-- här skapas ett meddelande om någon inputfält är tom -->
+                    </div>
                     <label for="title">Titel:</label>
-                    <input type="text" id="title" name="title" required>
+                    <input type="text" id="title" name="title">
                 
                     <label for="author">Författare:</label>
-                    <input type="text" id="author" name="author" required>
+                    <input type="text" id="author" name="author" >
                 
                     <label for="content">Innehåll:</label>
-                    <textarea id="content" name="content" required></textarea>
+                    <textarea id="content" name="content" ></textarea>
                 
-                    <button type="submit" id="publicera">Publicera</button>
+                    <button type="button" id="publicera">Publicera</button>
                 </form>
             </section>
             <section id="blogg-inlägg">
                 <!-- blogg inläggen  -->
                 <h2>Blogg Inlägg</h2>
-                <div id="tidigare-inläggen">
-                    <article class="inlägg">
-                        <h3>Inlägg 1</h3>
-                        <p><time datetime="2025-09-26">26 september 2025</time> av <strong>Anna</strong></p>
-                        <p>Detta är innehållet för inlägg 1.</p>
-                    </article>
-
-                    <article class="inlägg">
-                        <h3>Inlägg 2</h3>
-                        <p><time datetime="2025-09-25">25 september 2025</time> av <strong>Björn</strong></p>
-                        <p>Detta är innehållet för inlägg 2.</p>
-                    </article>
-                    <!-- JavaScript lägger till fler här -->
+                <h3 id="inga-inlägg-meddelande">Inga inlägg ännu tryck på <strong> Skapa inlägg </strong>för att skapa inlägg</h3>
+                <div id="tidigare-inläggen" class="tidigare-inläggen">
+                    <!-- JavaScript lägger till inlägg här -->
                 </div>
             </section>
         </div>
     </main>
     <footer>
-        <a id="till-toppen">Till toppen</a>
-        <a >Inlägg</a>
-        <a id="kontakta-oss">KONTAKTA OSS</a> 
-        <p>&copy; 2024 Blogg Plattform</p>
+        <button id="till-toppen">TILL TOPPEN</button>
+        <p>&copy; 2025 Blogg Plattform</p>
     </footer>
 </body>
 </html>
