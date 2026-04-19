@@ -10,6 +10,34 @@ const senasteVisning = document.getElementById("senaste-visning")
 const senasteVisningSection = document.getElementById("senaste-visning-section")
 const ingaInläggMeddelande = document.getElementById("inga-inlägg-meddelande")
 
+function laddaFejkdata() {
+  const finns = hämtaData("inlägg");
+  if (finns.length > 0) return; // kör inte om det redan finns inlägg
+
+  const fejkInlägg = [
+    {
+      titel: "Mitt första projekt med React",
+      författare: "Aisha Hashi",
+      innehåll: "Jag har nyligen börjat utforska React och det har verkligen förändrat hur jag tänker kring komponentbaserad utveckling. Det som fascinerar mig mest är hur man kan dela upp UI i återanvändbara delar.\n\nJag byggde en enkel todo-app för att lära mig useState och useEffect. Det tog ett tag att förstå hur re-rendering fungerar men när det klickade var det en riktig aha-upplevelse.",
+      tid: "15 januari 2025, 10:30"
+    },
+    {
+      titel: "Varför jag älskar vanilla JavaScript",
+      författare: "Aisha Hashi",
+      innehåll: "Innan man hoppar in i ramverk som React eller Vue är det värt att verkligen lära sig vanilla JS på djupet. DOM-manipulation, eventlyssnare och asynkron kod är fundamentala koncept som alla ramverk bygger på.\n\nDen här bloggplattformen är ett bra exempel — allt är byggt med ren JavaScript utan ett enda beroende.",
+      tid: "3 februari 2025, 14:15"
+    },
+    {
+      titel: "Från elektronik till webbutveckling",
+      författare: "Aisha Hashi",
+      innehåll: "Min bakgrund inom elektronik har gett mig en unik syn på mjukvaruutveckling. Att förstå hur hårdvara och mjukvara kommunicerar gör det lättare att bygga system som faktiskt fungerar i verkligheten.\n\nJag ser många paralleller — en krets och en webbapp följer båda logiska flöden, hanterar tillstånd och reagerar på input. Principerna är desamma, bara abstraktionsnivån skiljer sig.",
+      tid: "20 februari 2025, 09:00"
+    },
+  ];
+
+  localStorage.setItem("inlägg", JSON.stringify(fejkInlägg));
+}
+
 tillToppen.addEventListener("click", function() {
   window.scrollTo({
     top: 0,
@@ -306,6 +334,7 @@ publicera.addEventListener("click", publiceraInlägg)
 
 
 window.addEventListener("DOMContentLoaded", (e)=>{
+    laddaFejkdata(); 
     const sparade = hämtaData("inlägg")
     if (sparade.length > 0) {
         ingaInläggMeddelande.style.display = "none";
